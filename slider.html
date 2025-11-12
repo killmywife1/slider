@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Наши работы - До и После</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 640px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 900px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            cursor: col-resize;
+        }
+
+        .image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .before-image {
+            z-index: 1;
+        }
+
+        .after-image {
+            width: 50%;
+            z-index: 2;
+            border-right: 3px solid white;
+        }
+
+        .slider-handle {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: white;
+            z-index: 3;
+            cursor: col-resize;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        .slider-handle::after {
+            content: '⟷';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #ff6b6b;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .labels {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 25px;
+            z-index: 4;
+        }
+
+        .label {
+            background: rgba(255,255,255,0.95);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            color: #ff6b6b;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-size: 1.1em;
+        }
+
+        .instructions {
+            color: white;
+            margin-top: 25px;
+            font-size: 1.2em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 700px) {
+            .slider-container {
+                height: 600px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .label {
+                padding: 8px 16px;
+                font-size: 1em;
+            }
+            
+            .slider-handle::after {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .slider-container {
+                height: 500px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .instructions {
+                font-size: 1em;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ Наши работы: До и После</h1>
+        
+        <div class="slider-container" id="slider">
+            <!-- ЗАМЕНИТЕ НА ВАШИ ИМЕНА ФАЙЛОВ -->
+            <img src="facial_before.jpg" alt="До процедуры" class="image before-image">
+            <img src="facial_after.jpg" alt="После процедуры" class="image after-image">
+            
+            <div class="slider-handle" id="handle"></div>
+            
+            <div class="labels">
+                <div class="label">👈 ДО</div>
+                <div class="label">ПОСЛЕ 👉</div>
+            </div>
+        </div>
+        
+        <p class="instructions">← Перетащите ползунок или кликните в любую точку →</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const slider = document.getElementById('slider');
+            const handle = document.getElementById('handle');
+            const afterImage = document.querySelector('.after-image');
+            let isDragging = false;
+
+            function updateSliderPosition(clientX) {
+                const sliderRect = slider.getBoundingClientRect();
+                let position = ((clientX - sliderRect.left) / sliderRect.width) * 100;
+                
+                position = Math.max(0, Math.min(100, position));
+                
+                afterImage.style.width = position + '%';
+                handle.style.left = position + '%';
+            }
+
+            slider.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                updateSliderPosition(e.clientX);
+                slider.style.cursor = 'grabbing';
+            });
+
+            document.addEventListener('mousemove', function(e) {
+                if (isDragging) {
+                    updateSliderPosition(e.clientX);
+                }
+            });
+
+            document.addEventListener('mouseup', function() {
+                isDragging = false;
+                slider.style.cursor = 'col-resize';
+            });
+
+            slider.addEventListener('touchstart', function(e) {
+                isDragging = true;
+                updateSliderPosition(e.touches[0].clientX);
+                e.preventDefault();
+            });
+
+            document.addEventListener('touchmove', function(e) {
+                if (isDragging) {
+                    updateSliderPosition(e.touches[0].clientX);
+                    e.preventDefault();
+                }
+            });
+
+            document.addEventListener('touchend', function() {
+                isDragging = false;
+            });
+
+            slider.addEventListener('click', function(e) {
+                updateSliderPosition(e.clientX);
+            });
+
+            slider.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+            });
+        });
+    </script>
+</body>
+</html>
